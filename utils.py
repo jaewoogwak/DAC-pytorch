@@ -1,6 +1,6 @@
 from sklearn import metrics
 import numpy as np
-from sklearn.utils.linear_assignment_ import linear_assignment
+from scipy.optimize import linear_sum_assignment
 
 def NMI(y_true, y_pred):
     return metrics.normalized_mutual_info_score(y_true, y_pred)
@@ -17,6 +17,8 @@ def ACC(y_true, y_pred):
     w = np.zeros((D, D), dtype=np.int64)
     for i in range(y_pred.size):
         w[y_pred[i], y_true[i]] += 1
-    ind = linear_assignment(w.max() - w)
-
-    return sum([w[i, j] for i, j in ind]) * 1.0 / y_pred.size
+     
+    row_ind, col_ind = linear_sum_assignment(w.max() - w)
+        
+    total_correct = sum([w[i, j] for i, j in zip(row_ind, col_ind)])
+    return total_correct * 1.0 / y_pred.size
